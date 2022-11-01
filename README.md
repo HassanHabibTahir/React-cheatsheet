@@ -14,6 +14,21 @@ function App() {
 export default App;
 ```
 
+## Props
+
+In ReactJS, the props are a type of object where the value of attributes of a tag is stored. The word “props” implies “properties”, and its working functionality is quite similar to HTML attributes.
+Basically, these props components are read-only components.
+
+```javascript
+function Introduction(props) {
+  return <h1>Hello, I’m {props.name}!</h1>;
+}
+function Introduction({ name }) {
+  return <h1>Hello, I’m {name}!</h1>;
+}
+const element = <Introduction name="The Doctor" />;
+```
+
 <!-- # Getting Started with Create React App
 
 This project was bootstrapped with [Create React App](https://github.com/facebook/create-react-app).
