@@ -474,6 +474,256 @@ React.useEffect(() => {
 }, [count]);
 ```
 
+## Events;
+
+## Life Cycle
+
+### Mounting
+
+These methods are called in the following order when an instance of a component is being created and inserted into the DOM:
+
+constructor()
+static getDerivedStateFromProps()
+render()
+componentDidMount()
+
+### Updating
+
+An update can be caused by changes to props or state. These methods are called in the following order when a component is being re-rendered:
+
+static getDerivedStateFromProps()
+shouldComponentUpdate()
+render()
+getSnapshotBeforeUpdate()
+componentDidUpdate()
+
+### Unmounting
+
+This method is called when a component is being removed from the DOM:
+
+componentWillUnmount()
+
+### Hooks;
+
+### useState
+
+### useEffect
+
+This means useEffect runs on every render and thus the event handlers will unnecessarily get detached and reattached on each render.
+
+```js
+window.React.useEffect(() => {
+  console.log(`adding listener ${count}`);
+  window.addEventListener("click", listener);
+});
+```
+
+### component will unmount
+
+his is the optional cleanup mechanism for effects. Every effect may return a function that cleans up after it. This lets us keep the logic for adding and removing subscriptions close to each other. They’re part of the same effect!
+the side-effect runs after every rendering.
+
+```js
+window.React.useEffect(() => {
+  return () => {
+    console.log(`removing listener ${count}`);
+    window.removeEventListener("click", listener);
+  };
+});
+```
+
+```js
+import { useEffect } from "react";
+function RepeatMessage({ message }) {
+  useEffect(() => {
+    const id = setInterval(() => {
+      console.log(message);
+    }, 2000);
+    return () => {
+      clearInterval(id);
+    };
+  }, [message]);
+  return <div>I'm logging to console "{message}"</div>;
+}
+```
+
+### useEffect componentDidMount
+
+the side-effect runs once after the initial rendering.
+
+```js
+import { useEffect } from "react";
+function Greet() {
+  let name = "Hassan Habib Tahir";
+  const message = `Hello, ${name}!`; // Calculates output
+  useEffect(() => {
+    // Good!
+    document.title = `Greetings to ${name}`; // Side-effect!
+  }, []);
+  return <div>{message}</div>; // Calculates output
+}
+```
+
+callback is the function containing the side-effect logic. callback is executed right after changes were being pushed to DOM.
+dependencies is an optional array of dependencies. useEffect() executes callback only if the dependencies have changed between renderings.
+
+```js
+useEffect(callback[, dependencies]);
+```
+
+### Component did update
+
+```js
+import { useEffect } from "react";
+function MyComponent({ prop }) {
+  const [state, setState] = useState();
+  useEffect(() => {
+    // Side-effect uses `prop` and `state`
+  }, [prop, state]);
+  return <div>....</div>;
+}
+```
+
+### useMemo
+
+useMemo is a React Hook that lets you cache the result of a calculation between re-renders.
+The basic purpose of the useMemo hook is related to the fact that we try to avoid the unnecessary re-rendering of components and props in our program.
+<b>Example 1</b>
+Let’s make a simple application to demonstrate the use of the useMemo hook.
+
+The program below has the following components:
+
+<b>Increment</b> button: starts from 0 and increases the count by 1.
+
+<b>Even num</b> button: starts from 2 and returns even numbers going forward.
+
+An <b>evenNumDoouble()</b> function that returns the twice value of the even number.
+
+```js
+import React, { useState } from "react";
+
+function Counter() {
+  const [count, setCount] = useState(0);
+  const [evenNum, setEvenNum] = useState(2);
+
+  function evenNumDouble() {
+    console.log("double");
+    return evenNum * 2;
+  }
+
+  return (
+    <div>
+      <h2>Counter: {count}</h2>
+      <h2>Even Numbers: {evenNum}</h2>
+      <h2>even Number Double Value: {evenNumDouble()}</h2>
+      <button onClick={() => setCount(count + 1)}>Increment</button>
+      <button onClick={() => setEvenNum(evenNum + 2)}>Even Numbers</button>
+    </div>
+  );
+}
+
+export default Counter;
+```
+
+Explanation
+When we click the button Even Numbers, the evenNumDouble() function is called because the state of evenNum is changed.
+
+Clicking the Increment button also renders the evenNumDouble() function, although the count state does not change.
+
+This means that every time the evenNumDouble() function is rendered unnecessarily (on the page), the code becomes less efficient. We will fix this with the useMemo hook below.
+
+```js
+import React, { useState, useMemo } from "react";
+
+function Counter() {
+  const [count, setCount] = useState(0);
+  const [evenNum, setEvenNum] = useState(2);
+
+  const memoHook = useMemo(
+    function evenNumDouble() {
+      console.log("double");
+      return evenNum * 2;
+    },
+    [evenNum]
+  );
+
+  return (
+    <div>
+      <h2>Counter: {count}</h2>
+      <h2>Even Numbers: {evenNum}</h2>
+      <h2>even Number Double Value: {memoHook}</h2>
+      <button onClick={() => setCount(count + 1)}>Increment</button>
+      <button onClick={() => setEvenNum(evenNum + 2)}>Even Numbers</button>
+    </div>
+  );
+}
+
+export default Counter;
+```
+
+Explanation
+In the code above, we set the output of the evenNumDouble() function into a constant memoHook.
+
+This filters the function through the useMemo hook to only check if the specified variable (evenNum in this case) has been changed; only then will this function be rendered.
+
+```js
+import React, { memo, useState } from "react";
+import { useContext } from "react";
+import { GrudgeContext } from "./GrudgeContext";
+const NewGrudge = memo(({ onSubmit }) => {
+  const { addGrudge } = React.useContext(GrudgeContext);
+  const [person, setPerson] = useState("");
+  const [reason, setReason] = useState("");
+
+  const handleChange = (event) => {
+    event.preventDefault();
+    addGrudge({ person, reason });
+  };
+
+  return (
+    <form className="NewGrudge" onSubmit={handleChange}>
+      <input
+        className="NewGrudge-input"
+        placeholder="Person"
+        type="text"
+        value={person}
+        onChange={(event) => setPerson(event.target.value)}
+      />
+      <input
+        className="NewGrudge-input"
+        placeholder="Reason"
+        type="text"
+        value={reason}
+        onChange={(event) => setReason(event.target.value)}
+      />
+      <input className="NewGrudge-submit button" type="submit" />
+    </form>
+  );
+});
+
+export default NewGrudge;
+```
+
+### useCallback
+
+useCallback is a React Hook that lets you cache a function definition between re-renders.
+
+```js
+const [grudges, dispatch] = useReducer(reducer, initialState);
+const addGrudge = useCallback(
+  ({ person, reason }) => {
+    dispatch({
+      type: GRUDGES_ADD,
+      payload: {
+        person,
+        reason,
+      },
+    });
+  },
+  [dispatch]
+);
+```
+
 <!-- The coolest part about this is that it works for `increment`, `decrement`, and `reset` all at once.
 
 ### Quick Exercise
