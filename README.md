@@ -861,3 +861,122 @@ useEffect(() => {
   };
 }, [id, count]);
 ``` -->
+
+## Events
+
+Event handlers determine what action is to be taken whenever an event is fired. This could be a button click or a change in a text input.
+
+Essentially, event handlers are what make it possible for users to interact with your React app. Handling events with React elements is similar to handling events on DOM elements, with a few minor exceptions.
+
+```javascript
+function ActionLink() {
+  const handleClick = (e) => {
+    e.preventDefault();
+    console.log("The link was clicked.");
+  };
+
+  return <button onClick={handleClick}>Click me</button>;
+}
+```
+
+## What are synthetic events in React?
+
+React implements a synthetic events system that brings consistency and high performance to React apps and interfaces. It achieves consistency by normalizing events so that they have the same properties across different browsers and platforms.
+
+A synthetic event is a cross-browser wrapper around the browser’s native event. It has the same interface as the browser’s native event, including `stopPropagation()` and `preventDefault()`, except the events work identically across all browsers.
+
+It achieves high performance by automatically using event delegation. In actuality, React doesn’t attach event handlers to the nodes themselves. Instead, a single event listener is attached to the root of the document. When an event is fired, React maps it to the appropriate component element.
+
+## Call an inline function in an onClick event handler
+
+Inline functions allow you to write code for event handling directly in JSX. See the example below:
+
+```javascript
+import React from "react";
+
+const App = () => {
+  return <button onClick={() => alert("Hello!")}>Say Hello</button>;
+};
+
+export default App;
+```
+
+This is commonly used to avoid the extra function declaration outside the JSX, although it can be less readable and harder to maintain if the content of the inline function is too much.
+
+## Update the state inside an onClick event handler
+
+Let’s say your React application requires you to update the local state in an onClick event handler. Here’s how to do that:
+
+```javascript
+import React, { useState } from "react";
+
+const App = () => {
+  const [count, setCount] = useState(0);
+  return (
+    <div>
+      <p>{count}</p>
+      <button onClick={() => setCount(count + 1)}>Increment</button>
+      <button onClick={() => setCount(count - 1)}>Decrement</button>
+    </div>
+  );
+};
+
+export default App;
+```
+
+In the example above, the value of `useState` is modified by the `Increment` and `Decrement` buttons, which have the `setCount`, an updater function inside the `onClick` event handler.
+
+## Call multiple functions in an onClick event handler
+
+The onClick event handler also allows you to call multiple functions.
+
+```javascript
+import React, { useState } from "react";
+
+const App = () => {
+  const [count, setCount] = useState(0);
+  const sayHello = () => {
+    alert("Hello!");
+  };
+
+  return (
+    <div>
+      <p>{count}</p>
+      <button
+        onClick={() => {
+          sayHello();
+          setCount(count + 1);
+        }}
+      >
+        Say Hello and Increment
+      </button>
+    </div>
+  );
+};
+
+export default App;
+```
+
+## Custom components and events in React
+
+When it comes to events in React, only DOM elements are allowed to have event handlers. Take the example of a component called CustomButton with an onClick event. This button wouldn’t respond to clicks because of the reason above.
+
+```javascript
+import React from "react";
+
+const CustomButton = ({ onPress }) => {
+  return (
+    <button type="button" onClick={onPress}>
+      Click on me
+    </button>
+  );
+};
+
+const App = () => {
+  const handleEvent = () => {
+    alert("I was clicked");
+  };
+  return <CustomButton onPress={handleEvent} />;
+};
+export default App;
+```
