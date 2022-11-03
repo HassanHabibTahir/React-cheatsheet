@@ -840,3 +840,62 @@ const addGrudge = useCallback(
   [dispatch]
 );
 ```
+
+### useRef;
+
+useRef is a React Hook that lets you reference a value that’s not needed for rendering.
+and create a mutable variable which will not re-render the components
+
+useRef(initialValue) is a built-in React hook that accepts one argument as the initial value and returns a reference (aka ref). A reference is an object having a special property current.
+
+```js
+import { useRef } from "react";
+function MyComponent() {
+  const reference = useRef(initialValue);
+  const someHandler = () => {
+    // Access reference value:
+    const value = reference.current;
+    // Update reference value:
+    reference.current = newValue;
+  };
+}
+```
+
+Updating a reference doesn't trigger a component re-rendering.
+
+```js
+import { useRef } from "react";
+function LogButtonClicks() {
+  const countRef = useRef(0);
+
+  const handle = () => {
+    countRef.current++;
+    console.log(`Clicked ${countRef.current} times`);
+  };
+  console.log("I rendered!");
+  return <button onClick={handle}>Click me</button>;
+}
+```
+
+#### Accessing DOM elements
+
+```js
+import { useRef, useEffect } from "react";
+function AccessingElement() {
+  const elementRef = useRef();
+  useEffect(() => {
+    const divElement = elementRef.current;
+    console.log(divElement); // logs <div>I'm an element</div>
+  }, []);
+  return <div ref={elementRef}>I'm an element</div>;
+}
+```
+
+### useLayoutEffect
+
+useEffect hook serves asynchronously, whereas the useLayoutEffect hook works synchronously;
+![Example useLayoutEffect](https://miro.medium.com/max/828/1*GeEvUL0Zl3FVlSzNhFKiSg.gif)
+
+```js
+
+```
