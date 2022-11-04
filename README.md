@@ -894,8 +894,1035 @@ function AccessingElement() {
 ### useLayoutEffect
 
 useEffect hook serves asynchronously, whereas the useLayoutEffect hook works synchronously;
+
+This runs synchronously immediately after React has performed all DOM mutations. This can be useful if you need to make DOM measurements (like getting the scroll position or other styles for an element) and then make DOM mutations or trigger a synchronous re-render by updating state.
+
+As far as scheduling, this works the same way as componentDidMount and componentDidUpdate. Your code runs immediately after the DOM has been updated, but before the browser has had a chance to "paint" those changes (the user doesn't actually see the updates until after the browser has repainted).
+
 ![Example useLayoutEffect](https://miro.medium.com/max/828/1*GeEvUL0Zl3FVlSzNhFKiSg.gif)
 
 ```js
-
+import React, { useLayoutEffect } from "react";
+const APP = (props) => {
+  useLayoutEffect(() => {
+    //Do something and either return undefined or a cleanup function
+    return () => {
+      //Do some cleanup here
+    };
+  }, [dependencies]);
+};
 ```
+
+### Style Your React App
+
+#### Inline Styles
+
+Inline styles are the most direct away to style any React application.
+
+```javascript
+export default function App() {
+  return (
+    <section
+      style={{
+        fontFamily: "-apple-system",
+        fontSize: "1rem",
+        fontWeight: 1.5,
+        lineHeight: 1.5,
+        color: "#292b2c",
+        backgroundColor: "#fff",
+        padding: "0 2em",
+      }}
+    >
+      <div
+        style={{
+          textAlign: "center",
+          maxWidth: "950px",
+          margin: "0 auto",
+          border: "1px solid #e6e6e6",
+          padding: "40px 25px",
+          marginTop: "50px",
+        }}
+      >
+        <img
+          src="https://randomuser.me/api/portraits/women/48.jpg"
+          alt="Tammy Stevens"
+          style={{
+            margin: "-90px auto 30px",
+            width: "100px",
+            borderRadius: "50%",
+            objectFit: "cover",
+            marginBottom: "0",
+          }}
+        />
+        <div>
+          <p
+            style={{
+              lineHeight: 1.5,
+              fontWeight: 300,
+              marginBottom: "25px",
+              fontSize: "1.375rem",
+            }}
+          >
+            This is one of the best developer blogs on the planet! I read it
+            daily to improve my skills.
+          </p>
+        </div>
+        <p
+          style={{
+            marginBottom: "0",
+            fontWeight: 600,
+            fontSize: "1rem",
+          }}
+        >
+          Tammy Stevens
+          <span style={{ fontWeight: 400 }}> · Front End Developer</span>
+        </p>
+      </div>
+    </section>
+  );
+}
+```
+
+#### Plain CSS
+
+Instead of using inline styles, it's common to import a CSS stylesheet to style a component's elements.
+Writing CSS in a stylesheet is probably the most common and basic approach to styling a React application, but it shouldn't be dismissed so easily.
+
+```javascript
+/* src/styles.css */
+
+body {
+  font-family: -apple-system, system-ui, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+  margin: 0;
+  font-size: 1rem;
+  font-weight: 1.5;
+  line-height: 1.5;
+  color: #292b2c;
+  background-color: #fff;
+}
+.testimonial {
+  margin: 0 auto;
+  padding: 0 2em;
+}
+.testimonial-wrapper {
+  text-align: center;
+  max-width: 950px;
+  margin: 0 auto;
+  border: 1px solid #e6e6e6;
+  padding: 40px 25px;
+  margin-top: 50px;
+}
+.testimonial-quote p {
+  line-height: 1.5;
+  font-weight: 300;
+  margin-bottom: 25px;
+  font-size: 1.375rem;
+}
+.testimonial-avatar {
+  margin: -90px auto 30px;
+  width: 100px;
+  border-radius: 50%;
+  object-fit: cover;
+  margin-bottom: 0;
+}
+.testimonial-name {
+  margin-bottom: 0;
+  font-weight: 600;
+  font-size: 1rem;
+}
+.testimonial-name span {
+  font-weight: 400;
+}
+```
+
+#### SASS / SCSS
+
+What is SASS? SASS is an acronym that stands for: Syntactically Awesome Style Sheets.
+SASS gives us some powerful tools, many of which don't exist in normal CSS stylesheets. It includes features like variables, extending styles, and nesting.
+
+```javascript
+/* styles.scss */
+npm install node-sass
+nav {
+  ul {
+    margin: 0;
+    padding: 0;
+    list-style: none;
+  }
+
+  li { display: inline-block; }
+
+  a {
+    display: block;
+    padding: 6px 12px;
+    text-decoration: none;
+  }
+}
+```
+
+##### CSS Modules
+
+CSS modules are another slight alternative to something like CSS or SASS.
+What is great about CSS modules is that they can be used with either normal CSS or SASS.
+
+```javascript
+/* src/styles.module.css */
+
+body {
+  font-family: -apple-system, system-ui, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+  margin: 0;
+  font-size: 1rem;
+  font-weight: 1.5;
+  line-height: 1.5;
+  color: #292b2c;
+  background-color: #fff;
+}
+
+/* styles skipped */
+
+.testimonial-name span {
+  font-weight: 400;
+}
+```
+
+```javascript
+import styles from "./styles.module.css";
+
+export default function App() {
+  return (
+    <section className={styles.testimonial}>
+      <div className={styles["testimonial-wrapper"]}>
+        <img
+          src="https://randomuser.me/api/portraits/women/48.jpg"
+          alt="Tammy Stevens"
+          className={styles["testimonial-avatar"]}
+        />
+        <div>
+          <p className={styles["testimonial-quote"]}>
+            This is one of the best developer blogs on the planet! I read it
+            daily to improve my skills.
+          </p>
+        </div>
+        <p className={styles["testimonial-name"]}>
+          Tammy Stevens
+          <span> · Front End Developer</span>
+        </p>
+      </div>
+    </section>
+  );
+}
+```
+
+#### CSS-in-JS
+
+Similar to how React allowed us to write HTML as JavaScript with JSX, CSS-in-JS has done something similar with CSS.
+
+```javascript
+import styled from "styled-components";
+
+const Button = styled.button`
+  color: limegreen;
+  border: 2px solid limegreen;
+  font-size: 1em;
+  margin: 1em;
+  padding: 0.25em 1em;
+  border-radius: 3px;
+
+  &:hover {
+    opacity: 0.9;
+  }
+`;
+
+export default function App() {
+  return (
+    <div>
+      <Button>Click me</Button>
+    </div>
+  );
+}
+```
+
+## Using a Reducer
+
+We could try to get clever here with `useCallback` and `React.memo`, but since we're always replacing the array of grudges, this is never really going to work out.
+
+What if we took a different approach to managing state?
+
+Let's make a new file called `reducer.js`.
+
+```js
+const reducer = (state = [], action) => {
+  return state;
+};
+```
+
+And then we swap out that `useState` with a `useReducer`.
+
+```js
+const [grudges, dispatch] = useReducer(reducer, initialState);
+```
+
+We're going to create an action type and an action creator.
+
+```js
+const GRUDGE_ADD = "GRUDGE_ADD";
+const GRUDGE_FORGIVE = "GRUDGE_FORGIVE";
+```
+
+```js
+const addGrudge = ({ person, reason }) => {
+  dispatch({
+    type: GRUDGE_ADD,
+    payload: {
+      person,
+      reason,
+    },
+  });
+};
+```
+
+We'll add it to the reducer.
+
+```js
+const reducer = (state = [], action) => {
+  if (action.type === GRUDGE_ADD) {
+    return [
+      {
+        id: id(),
+        ...action.payload,
+      },
+      ...state,
+    ];
+  }
+  return state;
+};
+```
+
+### Forgiveness
+
+Let's make an action creator
+
+```js
+const forgiveGrudge = (id) => {
+  dispatch({
+    type: GRUDGE_FORGIVE,
+    payload: {
+      id,
+    },
+  });
+};
+```
+
+We'll also update the reducer here.
+
+```js
+if (action.type === GRUDGE_FORGIVE) {
+  return state.map((grudge) => {
+    if (grudge.id === action.payload.id) {
+      return { ...grudge, forgiven: !grudge.forgiven };
+    }
+    return grudge;
+  });
+}
+```
+
+We'll thread through `forgiveGrudge` as `onForgive`.
+
+```js
+<button onClick={() => onForgive(grudge.id)}>Forgive</button>
+```
+
+## The Context API
+
+#### What is Context API?
+
+The React Context API is a way for a React app to effectively produce global variables that can be passed around. This is the alternative to "prop drilling" or moving props from grandparent to child to parent, and so on.
+The above example wasn't _too_ bad. But, you can see how it might get a bit out of hand as our application grows.
+
+What if two very different distant cousin components needed the same data?
+
+Modern builds of React allow you to use something called the Context API to make this better. It's basically a way for very different pieces of your application to communicate with each other.
+
+We're going to rip a lot out of `Application.js` and move it to a new file called `GrudgeContext.js` and it's going to look something like this.
+
+```js
+import React, { useReducer, createContext, useCallback } from "react";
+import initialState from "./initialState";
+import id from "uuid/v4";
+
+export const GrudgeContext = createContext();
+
+const GRUDGE_ADD = "GRUDGE_ADD";
+const GRUDGE_FORGIVE = "GRUDGE_FORGIVE";
+
+const reducer = (state = [], action) => {
+  if (action.type === GRUDGE_ADD) {
+    return [
+      {
+        id: id(),
+        ...action.payload,
+      },
+      ...state,
+    ];
+  }
+
+  if (action.type === GRUDGE_FORGIVE) {
+    return state.map((grudge) => {
+      if (grudge.id === action.payload.id) {
+        return { ...grudge, forgiven: !grudge.forgiven };
+      }
+      return grudge;
+    });
+  }
+
+  return state;
+};
+
+export const GrudgeProvider = ({ children }) => {
+  const [grudges, dispatch] = useReducer(reducer, initialState);
+
+  const addGrudge = useCallback(
+    ({ person, reason }) => {
+      dispatch({
+        type: GRUDGE_ADD,
+        payload: {
+          person,
+          reason,
+        },
+      });
+    },
+    [dispatch]
+  );
+
+  const toggleForgiveness = useCallback(
+    (id) => {
+      dispatch({
+        type: GRUDGE_FORGIVE,
+        payload: {
+          id,
+        },
+      });
+    },
+    [dispatch]
+  );
+
+  return (
+    <GrudgeContext.Provider value={{ grudges, addGrudge, toggleForgiveness }}>
+      {children}
+    </GrudgeContext.Provider>
+  );
+};
+```
+
+Now, `Application.js` looks a lot more slimmed down.
+
+```js
+import React from "react";
+
+import Grudges from "./Grudges";
+import NewGrudge from "./NewGrudge";
+
+const Application = () => {
+  return (
+    <div className="Application">
+      <NewGrudge />
+      <Grudges />
+    </div>
+  );
+};
+
+export default Application;
+```
+
+### Wrapping the Application in Your New Provider
+
+```js
+ReactDOM.render(
+  <GrudgeProvider>
+    <Application />
+  </GrudgeProvider>,
+  rootElement
+);
+```
+
+That works and it's cool, but it's still missing the point.
+
+### Hooking Up the Context API
+
+So, we don't need that pass through on `Grudges` anymore. Let's rip that out completely.
+
+```js
+import React from "react";
+import Grudge from "./Grudge";
+
+const Grudges = ({ grudges = [] }) => {
+  return (
+    <section className="Grudges">
+      <h2>Grudges ({grudges.length})</h2>
+      {grudges.map((grudge) => (
+        <Grudge key={grudge.id} grudge={grudge} />
+      ))}
+    </section>
+  );
+};
+
+export default Grudges;
+```
+
+But, we will need to tell it about the grudges so that it can iterate through them.
+
+```js
+import React from "react";
+import Grudge from "./Grudge";
+import { GrudgeContext } from "./GrudgeContext";
+
+const Grudges = () => {
+  const { grudges } = React.useContext(GrudgeContext);
+
+  return (
+    <section className="Grudges">
+      <h2>Grudges ({grudges.length})</h2>
+      {grudges.map((grudge) => (
+        <Grudge key={grudge.id} grudge={grudge} />
+      ))}
+    </section>
+  );
+};
+
+export default Grudges;
+```
+
+#### Individual Grudges
+
+```js
+import React from "react";
+import { GrudgeContext } from "./GrudgeContext";
+
+const Grudge = ({ grudge }) => {
+  const { toggleForgiveness } = React.useContext(GrudgeContext);
+
+  return (
+    <article className="Grudge">
+      <h3>{grudge.person}</h3>
+      <p>{grudge.reason}</p>
+      <div className="Grudge-controls">
+        <label className="Grudge-forgiven">
+          <input
+            type="checkbox"
+            checked={grudge.forgiven}
+            onChange={() => toggleForgiveness(grudge.id)}
+          />{" "}
+          Forgiven
+        </label>
+      </div>
+    </article>
+  );
+};
+
+export default Grudge;
+```
+
+### Adding a New Grudge with the Context API
+
+In this case, we _just_ need the ability to add a grudge.
+
+```js
+const NewGrudge = () => {
+  const [person, setPerson] = React.useState('');
+  const [reason, setReason] = React.useState('');
+  const { addGrudge } = React.useContext(GrudgeContext);
+
+  const handleSubmit = event => {
+    event.preventDefault();
+
+    addGrudge({
+      person,
+      reason
+    });
+  };
+
+  return (
+    // …
+  );
+};
+
+export default NewGrudge;
+
+const defaultGrudges = {
+  1: {
+    id: 1,
+    person: name.first(),
+    reason: 'Parked too close to me in the parking lot',
+    forgiven: false
+  },
+  2: {
+    id: 2,
+    person: name.first(),
+    reason: 'Did not brew another pot of coffee after drinking the last cup',
+    forgiven: false
+  }
+};
+```
+
+```js
+export const GrudgeProvider = ({ children }) => {
+  const [grudges, setGrudges] = useState({});
+
+  const addGrudge = (grudge) => {
+    grudge.id = id();
+    setGrudges({
+      [grudge.id]: grudge,
+      ...grudges,
+    });
+  };
+
+  const toggleForgiveness = (id) => {
+    const newGrudges = { ...grudges };
+    const target = grudges[id];
+    target.forgiven = !target.forgiven;
+    setGrudges(newGrudges);
+  };
+
+  return (
+    <GrudgeContext.Provider
+      value={{ grudges: Object.values(grudges), addGrudge, toggleForgiveness }}
+    >
+      {children}
+    </GrudgeContext.Provider>
+  );
+};
+```
+
+```js
+const defaultState = {
+  past: [],
+  present: [],
+  future: [],
+};
+```
+
+We've broken almost everything. So, let's make this a bit better.
+
+```js
+const reducer = (state, action) => {
+  if (action.type === ADD_GRUDGE) {
+    return {
+      past: [],
+      present: [
+        {
+          id: uniqueId(),
+          ...action.payload,
+        },
+        ...state.present,
+      ],
+      future: [],
+    };
+  }
+
+  if (action.type === FORGIVE_GRUDGE) {
+    return {
+      past: [],
+      present: state.present.filter(
+        (grudge) => grudge.id !== action.payload.id
+      ),
+      future: [],
+    };
+  }
+
+  return state;
+};
+```
+
+### Why Redux?
+
+State transfer between components is pretty messy in React since it is hard to keep track of which component the data is coming from. It becomes really complicated if users are working with a large number of states within an application.
+![Redux](https://www.freecodecamp.org/news/content/images/size/w1000/2022/06/2.png)
+Redux solves the state transfer problem by storing all of the states in a single place called a store. So, managing and transferring states becomes easier as all the states are stored in the same convenient store. Every component in the application can then directly access the required state from that store.
+
+#### What is Redux?
+
+Redux is a predictable state container for JavaScript applications. It helps you write apps that behave consistently, run in different environments (client, server, and native), and are easy to test. Redux manages an application’s state with a single global object called Store.
+
+#### Pillars of Redux
+
+These are Redux’s main pillars:
+
+##### Store:
+
+A store is an object that holds the application's state tree. There should only be a single store in a Redux app, as the composition happens at the reducer level.
+getState() returns the current state of the store.
+
+##### dispatch()
+
+dispatches an action. It is the only way to update the application state.
+
+```javascript
+() => dispatch({ msg: "ADD_SOMETHING" });
+```
+
+subscribe() subscribes a change listener to the state.
+unsubscribe() is useful when you no longer want to call your listener method when the state changes.
+
+##### Actions:
+
+An action is a plain object that represents an intention to change the state. They must have a property to indicate the type of action to be carried out.
+
+. Actions are payloads of information that send data from your application to your store.
+. Any data, whether from UI events or network callbacks, needs to eventually be dispatched as actions.
+. Actions must have a type field, indicating the type of action being performed.
+
+##### Reducers:
+
+Reducers are pure functions that specify how the application's state changes in response to actions sent to the store.
+. Actions only describe what happened, not how the application's state changes.
+. A reducer is a function that accepts the current state and action, and returns a new state with the action performed.
+. combineReducers() utility can be used to combine all the reducers in the app into a single index reducer which makes maintainability much easier
+
+##### Web Application with Redux
+
+##### Create Store
+
+1. Create a store in the index.js file
+
+```javascript
+//import redux from redux;
+// create Store;
+import { createStore } from "redux";
+import { composeWithDevTools } from "redux-devtools-extension";
+import rootReducer from "./rootReducer";
+// create Store
+// plance function
+// all functions are defined in the store;
+const store = createStore(rootReducer, composeWithDevTools());
+
+export default store;
+```
+
+##### Main
+
+```javascript
+import React from "react";
+import ReactDOM from "react-dom";
+import "./index.css";
+import App from "./App";
+import * as serviceWorker from "./serviceWorker";
+import { Provider } from "react-redux";
+import store from "./redux/store";
+ReactDOM.render(
+  <React.StrictMode>
+    <Provider store={store}>
+      <App />
+    </Provider>
+  </React.StrictMode>,
+  document.getElementById("root")
+);
+```
+
+##### Reducer
+
+```js
+import { combineReducers } from "redux";
+import {
+  GET_ALL_PRODUCT,
+  GET_NUMBER_CART,
+  ADD_CART,
+  DECREASE_QUANTITY,
+  INCREASE_QUANTITY,
+  DELETE_CART,
+} from "./types";
+
+const initProduct = {
+  numberCart: 0,
+  Carts: [],
+  _products: [],
+};
+
+function todoProduct(state = initProduct, action) {
+  switch (action.type) {
+    case GET_ALL_PRODUCT:
+      return {
+        ...state,
+        _products: action.payload,
+      };
+    case GET_NUMBER_CART:
+      return {
+        ...state,
+      };
+    case ADD_CART:
+      if (state.numberCart == 0) {
+        let cart = {
+          id: action.payload.id,
+          quantity: 1,
+          name: action.payload.name,
+          image: action.payload.image,
+          price: action.payload.price,
+        };
+        state.Carts.push(cart);
+      } else {
+        let check = false;
+        state.Carts.map((item, key) => {
+          if (item.id == action.payload.id) {
+            state.Carts[key].quantity++;
+            check = true;
+          }
+        });
+        if (!check) {
+          let _cart = {
+            id: action.payload.id,
+            quantity: 1,
+            name: action.payload.name,
+            image: action.payload.image,
+            price: action.payload.price,
+          };
+          state.Carts.push(_cart);
+        }
+      }
+      return {
+        ...state,
+        numberCart: state.numberCart + 1,
+      };
+    case INCREASE_QUANTITY:
+      state.numberCart++;
+      state.Carts[action.payload].quantity++;
+
+      return {
+        ...state,
+      };
+    case DECREASE_QUANTITY:
+      let quantity = state.Carts[action.payload].quantity;
+      if (quantity > 1) {
+        state.numberCart--;
+        state.Carts[action.payload].quantity--;
+      }
+
+      return {
+        ...state,
+      };
+    case DELETE_CART:
+      let quantity_ = state.Carts[action.payload].quantity;
+      return {
+        ...state,
+        numberCart: state.numberCart - quantity_,
+        Carts: state.Carts.filter((item) => {
+          return item.id != state.Carts[action.payload].id;
+        }),
+      };
+    default:
+      return state;
+  }
+}
+const ShopApp = combineReducers({
+  _todoProduct: todoProduct,
+});
+export default ShopApp;
+```
+
+##### Actions
+
+```javascript
+export const INCREASE_QUANTITY = "INCREASE_QUANTITY";
+export const DECREASE_QUANTITY = "DECREASE_QUANTITY";
+export const GET_ALL_PRODUCT = "GET_ALL_PRODUCT";
+export const GET_NUMBER_CART = "GET_NUMBER_CART";
+export const ADD_CART = "ADD_CART";
+export const UPDATE_CART = "UPDATE_CART";
+export const DELETE_CART = "DELETE_CART";
+
+export const actFetchProductsRequest = () => {
+  return (dispatch) => {
+    return callApi("products", "GET", null).then((res) => {
+      dispatch(GetAllProduct(res.data));
+    });
+  };
+};
+
+/*GET_ALL_PRODUCT*/
+export function GetAllProduct(payload) {
+  return {
+    type: "GET_ALL_PRODUCT",
+    payload,
+  };
+}
+
+/*GET NUMBER CART*/
+export function GetNumberCart() {
+  return {
+    type: "GET_NUMBER_CART",
+  };
+}
+
+export function AddCart(payload) {
+  return {
+    type: "ADD_CART",
+    payload,
+  };
+}
+export function UpdateCart(payload) {
+  return {
+    type: "UPDATE_CART",
+    payload,
+  };
+}
+export function DeleteCart(payload) {
+  return {
+    type: "DELETE_CART",
+    payload,
+  };
+}
+
+export function IncreaseQuantity(payload) {
+  return {
+    type: "INCREASE_QUANTITY",
+    payload,
+  };
+}
+export function DecreaseQuantity(payload) {
+  return {
+    type: "DECREASE_QUANTITY",
+    payload,
+  };
+}
+```
+
+##### components
+
+```javascript
+import React from "react";
+import "./navbar.scss";
+import logo from "../../assets/logo.png";
+import { Link } from "react-router-dom";
+import { useSelector } from "react-redux";
+const Navbar = () => {
+  const getReducer = useSelector((state) => state._todoProduct);
+  const { numberCart } = getReducer;
+  console.log(getReducer, "getReducer Navbar ---->");
+  return (
+    <div className="parent_nav">
+      <div>
+        <Link to="/">
+          {" "}
+          <div>
+            <img
+              src={logo}
+              alt=""
+              style={{
+                width: "30%",
+                height: "30%",
+              }}
+            />
+          </div>
+        </Link>
+      </div>
+      <Link to="/cart">
+        <div className="cart_container">
+          <div>
+            <svg
+              xmlns="http://www.w3.org/2000/svg"
+              style={{
+                fontWeight: "bolder",
+              }}
+              width="30"
+              height="30"
+              fill="#F2246B"
+              className="bi bi-minecart"
+              viewBox="0 0 16 16"
+            >
+              <path d="M4 15a1 1 0 1 1 0-2 1 1 0 0 1 0 2zm0 1a2 2 0 1 0 0-4 2 2 0 0 0 0 4zm8-1a1 1 0 1 1 0-2 1 1 0 0 1 0 2zm0 1a2 2 0 1 0 0-4 2 2 0 0 0 0 4zM.115 3.18A.5.5 0 0 1 .5 3h15a.5.5 0 0 1 .491.592l-1.5 8A.5.5 0 0 1 14 12H2a.5.5 0 0 1-.491-.408l-1.5-8a.5.5 0 0 1 .106-.411zm.987.82 1.313 7h11.17l1.313-7H1.102z" />
+            </svg>
+          </div>
+          <div
+            style={{
+              color: "#F2246B",
+            }}
+          >
+            {numberCart}
+          </div>
+        </div>
+      </Link>
+    </div>
+  );
+};
+
+export default Navbar;
+```
+
+```js
+import Axios from "axios";
+import React from "react";
+import { useDispatch, useSelector } from "react-redux";
+import { actFetchProductsRequest, AddCart } from "../../store/action";
+export const Products = () => {
+  const dispatch = useDispatch();
+  const getReducer = useSelector((state) => state._todoProduct);
+  const { _products } = getReducer;
+  React.useEffect(() => {
+    (async () => {
+      dispatch(actFetchProductsRequest());
+    })();
+  }, []);
+  const CartHandler = (product) => {
+    dispatch(AddCart(product));
+  };
+  return (
+    <div className="mt-3">
+      <div class="container">
+        <div class="row">
+          {_products &&
+            _products.map((item, key) => (
+              <div class="col col-lg-3" key={key}>
+                <div className="pb-1">
+                  <div className="product-item bg-light mb-4">
+                    <div className="product-img position-relative overflow-hidden">
+                      <img
+                        className="img-fluid w-100 "
+                        style={{
+                          height: "250px",
+                        }}
+                        alt=""
+                        src={item.image}
+                        alt="website template image"
+                      />
+                    </div>
+                    <div className="text-center py-4">
+                      <a
+                        className="h6 text-decoration-none text-truncate"
+                        href="https://www.free-css.com/free-css-templates"
+                      >
+                        {item.name}
+                      </a>
+                      <div className="d-flex align-items-center justify-content-center mt-2">
+                        <h5>${item.price}</h5>
+                        <h6 className="text-muted ml-2">
+                          <del>$123.00</del>
+                        </h6>
+                      </div>
+                      <div>
+                        <button
+                          type="button"
+                          className="btn btn-outline-dark"
+                          onClick={() => CartHandler(item)}
+                        >
+                          Add to cart
+                        </button>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            ))}
+        </div>
+      </div>
+    </div>
+  );
+};
+```
+
+### Difference Between Context API and Redux
+
+In other way in redux you can set the data in one components in other components have right to acces in data.
+..//
+On the other hand, Context deals with them as they happen on the component level that's main you should to share data in components like props.
+
+### Difference betwen context api and props
+
+props work with one direction main data share in one component,context api you can share data with 3 or 4 components
